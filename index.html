@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OBTN KAVE-X TC 캠지기 전용 공동구매 | 땡큐캠핑</title>
+    <meta name="description" content="땡큐캠핑 제휴 캠핑장 운영자 전용 공동구매. 비어 있는 사이트 2곳을 몸만 가는 캠핑 상품으로 만들어보세요.">
+    <meta name="theme-color" content="#ED7900">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    
+    <style>
+        :root {
+            --thankq-orange: #ED7900;
+            --thankq-orange-hover: #D96E00;
+            --thankq-orange-light: #FFF4EB;
+            --thankq-orange-soft: #FFFAF6;
+            --text-dark: #111111;
+            --text-main: #333333;
+            --text-sub: #777777;
+            --border-color: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+            background-color: #F9FAFB;
+            color: var(--text-main);
+            word-break: keep-all;
+            -webkit-font-smoothing: antialiased;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .page-container {
+            max-width: 860px;
+            margin: 0 auto;
+            background-color: #FFFFFF;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 스크롤 등장 애니메이션 */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+
+        /* 공통 섹션 설정 */
+        .section-box {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 140px 24px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        @media (min-width: 768px) {
+            .section-box { padding: 180px 40px; }
+        }
+
+        /* 형광펜 밑줄 강조 효과 */
+        .highlight {
+            background: linear-gradient(180deg, rgba(255,255,255,0) 65%, #FFD2A6 35%);
+            display: inline;
+            padding: 0 4px;
+        }
+        
+        .highlight-gray {
+            background: linear-gradient(180deg, rgba(255,255,255,0) 65%, #E5E7EB 35%);
+            display: inline;
+            padding: 0 4px;
+        }
+
+        /* 공통 타이포그래피 */
+        .badge {
+            display: inline-block;
+            background-color: var(--thankq-orange-light);
+            color: var(--thankq-orange);
+            font-size: 16px;
+            font-weight: 800;
+            padding: 10px 22px;
+            border-radius: 50px;
+            margin-bottom: 28px;
+            letter-spacing: -0.02em;
+        }
+        .title-main {
+            font-size: 38px;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.35;
+            margin-bottom: 24px;
+            letter-spacing: -0.03em;
+        }
+        .title-sub {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--text-main);
+            line-height: 1.6;
+            letter-spacing: -0.01em;
+        }
+        @media (min-width: 768px) {
+            .title-main { font-size: 52px; margin-bottom: 32px; }
+            .title-sub { font-size: 24px; }
+        }
+
+        .text-orange { color: var(--thankq-orange); }
+        .bg-orange-soft { background-color: var(--thankq-orange-soft); }
+
+        /* UI 컴포넌트 */
+        .divider {
+            width: 40px;
+            height: 4px;
+            background-color: var(--thankq-orange);
+            margin: 40px auto;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--thankq-orange);
+            color: #FFFFFF;
+            font-size: 22px;
+            font-weight: 800;
+            padding: 22px 48px;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 400px;
+            transition: background-color 0.2s, transform 0.2s;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(237, 121, 0, 0.2);
+        }
+        .btn-primary:active {
+            transform: scale(0.98);
+            background-color: var(--thankq-orange-hover);
+        }
+
+        /* 상단 고정 헤더 */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* 모바일 하단 고정 CTA */
+        .mobile-cta {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #FFFFFF;
+            border-top: 1px solid var(--border-color);
+            padding: 16px 20px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+        }
+        @media (min-width: 769px) {
+            .mobile-cta { display: none; }
+        }
+        @media (max-width: 768px) {
+            body { padding-bottom: 90px; }
+        }
+        
+        /* 계산기 입력창 */
+        .calc-input {
+            width: 100%;
+            text-align: right;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            border: none;
+            border-bottom: 2px solid var(--border-color);
+            padding: 8px 0;
+            background: transparent;
+            transition: border-color 0.2s;
+        }
+        .calc-input:focus {
+            outline: none;
+            border-color: var(--thankq-orange);
+        }
+
+        /* 고정형 Q&A 박스 스타일 */
+        .qa-box {
+            background: #F9FAFB;
+            border-left: 5px solid var(--thankq-orange);
+            border-radius: 0 16px 16px 0;
+            padding: 32px;
+            text-align: left;
+            width: 100%;
+            max-width: 640px;
+            margin: 60px auto 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .qa-q {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            letter-spacing: -0.02em;
+        }
+        .qa-a {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-main);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            line-height: 1.7;
+        }
+        .qa-icon-q { color: var(--thankq-orange); font-weight: 900; font-size: 24px; line-height: 1.2; }
+        .qa-icon-a { color: #A0AEC0; font-weight: 900; font-size: 24px; line-height: 1.2; }
+    </style>
+</head>
+<body>
+
+    <header class="sticky-header">
+        <div class="page-container" style="box-shadow:none; padding: 16px 24px; display:flex; justify-content:space-between; align-items:center;">
+            <img src="https://www.genspark.ai/api/files/s/8tRzfuV1" alt="땡큐캠핑 로고" class="h-6 object-contain" onerror="this.outerHTML='<span class=\'font-bold text-xl text-orange\'>땡큐캠핑</span>'">
+            <a href="#apply" class="text-[16px] font-bold text-white bg-[#ED7900] px-6 py-2.5 rounded-lg hidden md:block">캠지기 전용 신청</a>
+        </div>
+    </header>
+
+    <div class="page-container">
+
+        <!-- 1. 메인 히어로 (도입부) -->
+        <section class="section-box bg-orange-soft relative">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <div class="badge">몸만 가는 캠핑 참여 캠핑장 모집</div>
+                <h1 class="title-main text-[40px] md:text-[56px] leading-[1.3]">
+                    <span class="highlight font-extrabold">예약자를 기다리지 말고,</span><br>
+                    캠핑을 시작하게 만드세요.
+                </h1>
+            </div>
+            
+            <div class="divider fade-up delay-100"></div>
+            
+            <div class="fade-up delay-200 w-full text-center flex flex-col items-center">
+                <p class="title-sub text-text-dark font-bold text-[22px] md:text-[26px]">
+                    기존 사이트에 텐트를 더해<br>
+                    새로운 예약상품과 <span class="text-orange font-extrabold">추가 수익</span>을 만듭니다.
+                </p>
+                <div class="mt-10 bg-white border-2 border-orange/30 px-8 py-4 rounded-full shadow-sm">
+                    <p class="text-[24px] md:text-[28px] font-extrabold text-orange tracking-tight">
+                        오비텐 프리미엄 체험존
+                    </p>
+                </div>
+            </div>
+            
+            <div class="mt-16 fade-up delay-300 w-full flex justify-center">
+                <a href="#apply" class="btn-primary">특별가 확인 및 참여하기</a>
+            </div>
+        </section>
+
+        <!-- 2. 신규 캠퍼의 진입 장벽 -->
+        <section class="section-box">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <h2 class="title-main text-[36px] md:text-[48px]">
+                    캠핑은 가고 싶지만<br>
+                    <span class="highlight font-extrabold">장비가 없습니다.</span>
+                </h2>
+                <p class="title-sub mt-8 text-[18px] md:text-[22px]">
+                    캠핑을 망설이는 고객에게 필요한 것은<br>
+                    더 많은 광고가 아니라 <strong class="text-text-dark">시작할 수 있는 조건</strong>입니다.
+                </p>
+            </div>
+            
+            <!-- 라운드 박스형 카드 레이아웃 -->
+            <div class="w-full max-w-[640px] flex flex-col gap-5 mt-16 fade-up delay-100 mx-auto">
+                <div class="bg-white border border-gray-200 rounded-[32px] py-6 px-8 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-8 shadow-sm">
+                    <span class="text-orange font-extrabold text-2xl md:text-3xl w-full md:w-auto text-center">비용 부담</span>
+                    <span class="hidden md:block w-[2px] h-8 bg-gray-200"></span>
+                    <span class="text-text-dark text-[18px] md:text-[20px] font-bold w-full md:w-auto text-center">초기 장비 구매의 장벽</span>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-[32px] py-6 px-8 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-8 shadow-sm">
+                    <span class="text-orange font-extrabold text-2xl md:text-3xl w-full md:w-auto text-center">공간 부족</span>
+                    <span class="hidden md:block w-[2px] h-8 bg-gray-200"></span>
+                    <span class="text-text-dark text-[18px] md:text-[20px] font-bold w-full md:w-auto text-center">장비 보관 장소의 부재</span>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-[32px] py-6 px-8 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-8 shadow-sm">
+                    <span class="text-orange font-extrabold text-2xl md:text-3xl w-full md:w-auto text-center">설치 두려움</span>
+                    <span class="hidden md:block w-[2px] h-8 bg-gray-200"></span>
+                    <span class="text-text-dark text-[18px] md:text-[20px] font-bold w-full md:w-auto text-center">복잡한 설치에 대한 걱정</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 기존 캠퍼의 니즈 -->
+        <section class="section-box bg-gray-50">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <h2 class="title-main text-[34px] md:text-[46px] leading-tight">
+                    장비가 없는 고객만<br>
+                    편안한 캠핑을 찾는 것은<br>
+                    아닙니다.
+                </h2>
+                <div class="divider"></div>
+                <p class="title-sub text-text-dark font-extrabold text-[22px] md:text-[26px]">
+                    캠핑을 자주 다니는 고객도 가끔은<br>
+                    <span class="highlight">준비 없이 가볍게 떠나고 싶어 합니다.</span>
+                </p>
+                <div class="mt-12 text-[20px] md:text-[22px] text-text-main font-medium leading-loose bg-white px-10 py-8 rounded-3xl shadow-sm border border-gray-100">
+                    <p>금요일 퇴근 후 가볍게 떠나는 캠핑</p>
+                    <p>설치 부담 없이 즐기는 커플 캠핑</p>
+                    <p>최소한의 짐으로 떠나는 미니멀 캠핑</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 발상의 전환 (캠핑 경험 판매) -->
+        <section class="section-box bg-orange-soft">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <h2 class="title-main text-[36px] md:text-[50px]">
+                    빈 사이트를 판매하는 것에서<br>
+                    <span class="highlight font-extrabold text-orange">캠핑 경험</span>을 판매하는 것으로.
+                </h2>
+            </div>
+            
+            <div class="flex flex-col items-center mt-16 fade-up delay-100 w-full max-w-[500px]">
+                <div class="w-full bg-white border border-gray-200 rounded-2xl py-8 px-4 text-2xl font-bold text-text-dark shadow-sm">
+                    기존 캠핑 사이트
+                </div>
+                
+                <div class="text-4xl text-orange my-6 font-bold">+</div>
+                
+                <div class="w-full bg-white border border-gray-200 rounded-2xl py-8 px-4 text-2xl font-bold text-text-dark shadow-sm">
+                    설치가 간편한 텐트
+                </div>
+                
+                <div class="text-3xl text-text-sub my-6 font-bold">↓</div>
+                
+                <div class="w-full bg-[#ED7900] border-4 border-[#ED7900] rounded-2xl py-10 px-4 text-3xl md:text-4xl font-extrabold text-white shadow-xl transform scale-105 tracking-tight">
+                    오비텐 프리미엄 체험존
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 오비텐 프리미엄 체험존 비주얼 선언 -->
+        <section class="section-box bg-white pb-24">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <div class="badge mb-6">땡큐캠핑의 새로운 문화</div>
+                <h2 class="title-main text-[40px] md:text-[56px] leading-tight mb-6">
+                    몸만 가는 캠핑<br>
+                    <span class="text-[#ED7900]">오비텐 프리미엄 체험존</span>
+                </h2>
+                
+                <p class="title-sub mb-8 font-bold text-[20px] md:text-[24px] text-text-dark leading-relaxed">
+                    처음부터 크게 시작할 필요 없습니다.<br>
+                    부담 없이 <span class="highlight">단 1개 사이트라도 시범 운영</span>해 보세요.
+                </p>
+                
+                <!-- 제품 사진 및 설명 공란 영역 -->
+                <div class="w-full max-w-[800px] mt-6">
+                    <div class="aspect-video bg-gray-50 border-2 border-dashed border-gray-300 rounded-3xl flex flex-col items-center justify-center text-gray-400">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-4">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        <span class="font-bold text-xl">OBTN KAVE-X TC 제품 연출 컷 (공란)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. 실제 제품 상세 안내 (4컷+영상 공란) -->
+        <section class="section-box bg-white pt-10">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <h2 class="title-main text-[36px] md:text-[48px] leading-tight">
+                    압도적인 개방감과 실용성,<br>
+                    <span class="highlight font-extrabold">OBTN KAVE-X TC</span><br>
+                    <span class="text-[24px] md:text-[28px] text-gray-400 font-bold mt-2 inline-block">(오비텐 케이브엑스 TC)</span>
+                </h2>
+                <p class="title-sub mt-4 text-[20px] md:text-[22px]">디자인과 기능성을 모두 갖춘 프리미엄 텐트를 확인해보세요.</p>
+                
+                <!-- 4컷 이미지 그리드 -->
+                <div class="w-full max-w-[720px] grid grid-cols-2 gap-4 mt-16 fade-up delay-100">
+                    <div class="aspect-square bg-gray-50 border border-gray-200 rounded-2xl flex flex-col items-center justify-center p-4">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ED7900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-3 opacity-50"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <span class="text-text-sub font-bold text-sm md:text-base">전면 개방 형태 (공란)</span>
+                    </div>
+                    <div class="aspect-square bg-gray-50 border border-gray-200 rounded-2xl flex flex-col items-center justify-center p-4">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ED7900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-3 opacity-50"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <span class="text-text-sub font-bold text-sm md:text-base">측면 디테일 (공란)</span>
+                    </div>
+                    <div class="aspect-square bg-gray-50 border border-gray-200 rounded-2xl flex flex-col items-center justify-center p-4">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ED7900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-3 opacity-50"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <span class="text-text-sub font-bold text-sm md:text-base">내부 공간 (공란)</span>
+                    </div>
+                    <div class="aspect-square bg-gray-50 border border-gray-200 rounded-2xl flex flex-col items-center justify-center p-4">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ED7900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-3 opacity-50"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <span class="text-text-sub font-bold text-sm md:text-base">수납 형태 (공란)</span>
+                    </div>
+                </div>
+
+                <!-- 1컷 영상 공란 -->
+                <div class="w-full max-w-[720px] aspect-video bg-orange-soft border-2 border-dashed border-orange rounded-3xl flex flex-col items-center justify-center mt-6 fade-up delay-200 shadow-sm mx-auto">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ED7900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-4 opacity-50">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <span class="text-orange font-bold text-lg md:text-xl">OBTN KAVE-X TC 설치 영상 (공란)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. 제품의 관리 편의성 (운영자 시점) -->
+        <section class="section-box">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <h2 class="title-main text-[36px] md:text-[48px]">
+                    <span class="highlight font-extrabold">관리하기 편해야 합니다.</span>
+                </h2>
+                <p class="title-sub mt-8 leading-relaxed text-[20px] md:text-[22px]">
+                    설치와 해체가 간편한 OBTN KAVE-X TC로<br>
+                    캠핑장의 대여 운영 부담을 확 낮췄습니다.
+                </p>
+            </div>
+            
+            <div class="flex flex-col items-center justify-center mt-16 fade-up delay-100 w-full">
+                <!-- 텐트 추상화 아이콘 -->
+                <svg width="140" height="140" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="mb-12">
+                    <path d="M50 15 L15 85 L85 85 Z" stroke="#ED7900" stroke-width="5" stroke-linejoin="round"/>
+                    <path d="M50 15 L50 85" stroke="#ED7900" stroke-width="4" stroke-linecap="round" stroke-dasharray="6 6"/>
+                    <path d="M35 85 L50 55 L65 85" stroke="#ED7900" stroke-width="5" stroke-linejoin="round"/>
+                </svg>
+
+                <div class="flex flex-col md:flex-row gap-6 w-full justify-center">
+                    <div class="px-10 py-5 bg-gray-50 rounded-full text-[20px] font-extrabold text-text-dark border border-gray-200">직관적인 이지셋업</div>
+                    <div class="px-10 py-5 bg-gray-50 rounded-full text-[20px] font-extrabold text-text-dark border border-gray-200">전천후 TC 소재</div>
+                    <div class="px-10 py-5 bg-gray-50 rounded-full text-[20px] font-extrabold text-text-dark border border-gray-200">빠른 철수와 관리</div>
+                </div>
+            </div>
+
+            <!-- Q&A Box 고정형 -->
+            <div class="qa-box fade-up delay-200">
+                <div class="qa-q">
+                    <span class="qa-icon-q">Q.</span>
+                    <span>관리가 너무 번거롭지 않을까요?</span>
+                </div>
+                <div class="qa-a">
+                    <span class="qa-icon-a">A.</span>
+                    <span>일반 텐트와 달리 OBTN KAVE-X TC는 이지셋업 구조와 전천후 TC 소재를 적용해 설치와 철수, 건조가 매우 간편합니다. 운영 부담이 크게 줄어듭니다.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. 새로운 운영 방식 안내 (고객 체험 캠핑) -->
+        <section class="section-box bg-gray-50">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <h2 class="title-main text-[36px] md:text-[48px]">
+                    직접 쳐주지 마세요.<br>
+                    <span class="highlight font-extrabold">이렇게 운영해보세요.</span>
+                </h2>
+                <p class="title-sub mt-6 text-[20px] md:text-[22px]">
+                    사장님이 매번 쳐주고 관리하는 글램핑이 아닙니다.<br>
+                    고객에게 <strong class="text-orange">직접 체험하는 진짜 캠핑</strong>을 선물하세요.<br>
+                    <strong class="text-text-dark mt-2 inline-block">고객이 직접 설치, 해체 해보는 체험 캠핑입니다.</strong>
+                </p>
+            </div>
+            
+            <div class="w-full max-w-[640px] mt-16 fade-up delay-100 flex flex-col gap-6 mx-auto">
+                <div class="bg-white p-8 rounded-[24px] border border-gray-200 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
+                    <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-2xl font-extrabold text-gray-500 shrink-0">1</div>
+                    <div>
+                        <p class="text-[22px] font-extrabold text-text-dark mb-2">계속 펴두는 것이 아닙니다</p>
+                        <p class="text-[18px] text-text-main">비바람에 상할까 걱정하지 마세요. 평소에는 가방 형태로 안전하게 보관합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-[24px] border border-gray-200 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
+                    <div class="w-16 h-16 rounded-full bg-orange-soft flex items-center justify-center text-2xl font-extrabold text-[#ED7900] shrink-0">2</div>
+                    <div>
+                        <p class="text-[22px] font-extrabold text-text-dark mb-2">입실 시 고객에게 전달만 하세요</p>
+                        <p class="text-[18px] text-text-main">예약 고객이 도착하면 텐트를 전달하고 사이트 안내를 합니다.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-[24px] border-2 border-orange shadow-md flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
+                    <div class="w-16 h-16 rounded-full bg-[#ED7900] flex items-center justify-center text-2xl font-extrabold text-white shrink-0">3</div>
+                    <div>
+                        <p class="text-[22px] font-extrabold text-[#ED7900] mb-2">고객이 스스로 진짜 캠핑을 즐깁니다</p>
+                        <p class="text-[18px] text-text-main font-medium">직관적인 이지셋업 덕분에 초보자도 직접 텐트를 치며 캠핑의 재미와 성취감을 느낍니다.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-[24px] border border-gray-200 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
+                    <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-2xl font-extrabold text-gray-500 shrink-0">4</div>
+                    <div>
+                        <p class="text-[22px] font-extrabold text-text-dark mb-2">체크아웃 때 반납만 받으세요</p>
+                        <p class="text-[18px] text-text-main">고객이 철수하고 가방에 넣은 텐트를 반납 받으며 파손 및 오염만 확인합니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-16 bg-white border border-gray-200 px-8 py-6 rounded-2xl max-w-[640px] fade-up delay-200 mx-auto w-full">
+                <p class="text-[20px] font-extrabold text-text-dark leading-relaxed text-center">
+                    대여만 해주고 설치는 고객이 직접!<br>
+                    <span class="text-orange">운영 부담은 확 줄이고 새로운 수익을 만듭니다.</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- 9. 가격 혜택 -->
+        <section class="section-box bg-[#111111] text-white">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <div class="badge bg-white/10 text-white border border-white/20 mb-6">캠지기 전용 공동구매 특별 혜택</div>
+                <h2 class="title-main text-white mb-16 text-[36px] md:text-[48px]">
+                    새로운 예약상품을 만들어 보세요.<br>
+                    부담을 낮췄습니다.
+                </h2>
+                
+                <div class="border border-white/20 rounded-[32px] p-12 md:p-16 w-full max-w-[600px] bg-white/5 backdrop-blur-sm">
+                    <div class="text-[20px] text-gray-400 mb-2 font-bold">일반 판매가격</div>
+                    <div class="text-[40px] text-gray-500 line-through font-light mb-12">545,000원</div>
+                    
+                    <div class="text-[24px] text-white font-extrabold mb-4">공동구매 특별가</div>
+                    <div class="text-[64px] md:text-[80px] font-extrabold text-[#ED7900] leading-none">345,000<span class="text-[36px] ml-1">원</span></div>
+                    
+                    <div class="mt-12 inline-block bg-[#ED7900] text-white font-extrabold text-[22px] px-10 py-4 rounded-full">
+                        200,000원 혜택
+                    </div>
+                </div>
+                
+                <p class="mt-10 text-[24px] md:text-[28px] text-white font-extrabold leading-relaxed">
+                    단순한 구매소비가 아니라 <span class="text-[#ED7900]">투자</span> 입니다.
+                </p>
+            </div>
+        </section>
+
+        <!-- 10. 매출 구조 안내 -->
+        <section class="section-box">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <h2 class="title-main text-[36px] md:text-[48px]">
+                    기존 사이트에<br>
+                    <span class="highlight font-extrabold">대여 수익을 만드세요.</span>
+                </h2>
+                <p class="title-sub mt-6 text-[20px] md:text-[24px]">
+                    한 번의 예약마다 <strong class="text-orange text-[26px]">20,000원</strong>의<br>
+                    추가 매출 기회를 만들 수 있습니다.
+                </p>
+            </div>
+
+            <!-- 수익 구조 중앙 정렬 -->
+            <div class="w-full max-w-[540px] mt-20 fade-up delay-100 flex flex-col gap-4 mx-auto text-center">
+                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-200 flex flex-col items-center justify-center">
+                    <span class="text-[18px] font-bold text-gray-500 mb-2">기존 사이트 이용료 (예시)</span>
+                    <span class="text-[32px] font-extrabold text-text-dark">50,000원</span>
+                </div>
+                
+                <div class="flex justify-center text-4xl text-gray-300 font-bold py-2">+</div>
+                
+                <div class="p-8 bg-orange-soft rounded-2xl border border-orange/30 flex flex-col items-center justify-center">
+                    <span class="text-[18px] font-bold text-orange mb-2">텐트 추가 대여료 (고정)</span>
+                    <span class="text-[32px] font-extrabold text-orange">20,000원</span>
+                </div>
+                
+                <div class="flex justify-center text-4xl text-gray-300 font-bold py-2">=</div>
+                
+                <div class="p-10 bg-white rounded-3xl border-4 border-orange shadow-lg flex flex-col items-center justify-center">
+                    <span class="text-[24px] font-extrabold text-text-dark mb-3">몸만 가는 캠핑상품</span>
+                    <span class="text-[52px] font-extrabold text-orange leading-none">70,000원</span>
+                </div>
+            </div>
+
+            <div class="mt-24 fade-up delay-200 w-full text-center flex flex-col items-center">
+                <h3 class="text-[32px] md:text-[40px] font-extrabold text-text-dark mb-6">다섯 번의 예약이면 총매출 <span class="highlight-gray">350,000원</span></h3>
+                
+                <p class="text-text-main text-[26px] font-extrabold bg-gray-100 px-10 py-5 rounded-2xl inline-block mb-10">
+                    70,000원 × 5회 = 350,000원
+                </p>
+                
+                <div class="bg-orange-soft border border-orange/20 px-8 py-6 rounded-2xl text-left max-w-[640px] mx-auto">
+                    <p class="text-[18px] md:text-[20px] text-text-dark font-bold leading-relaxed mb-4 text-center">
+                        매출 7만 원을 기준으로 5회 예약 시<br>
+                        도입비용(345,000원) 규모의 <span class="text-orange text-[22px]">총매출을 확보합니다!</span><br>
+                        (단순 2만 원 대여료 수익 기준으로는 약 18회 대여 필요)
+                    </p>
+                    <p class="text-[14px] text-text-sub text-center break-keep">
+                        * 실제 수익과 회수 시점은 캠핑장별 사이트 요금, 운영비용, 예약률 등에 따라 달라질 수 있습니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 11. 인터랙티브 수익 계산기 -->
+        <section class="section-box bg-gray-50 py-24" id="sec-calculator">
+            <div class="fade-up w-full max-w-[640px] text-center flex flex-col items-center">
+                <h2 class="text-[34px] md:text-[40px] font-extrabold text-text-dark mb-12">
+                    <span class="highlight">우리가 직접 운영한다면?</span>
+                </h2>
+                
+                <div class="bg-white p-8 md:p-10 rounded-[24px] shadow-sm border border-gray-200 w-full text-left">
+                    <div class="mb-8 flex justify-between items-center">
+                        <label class="text-[18px] md:text-[20px] font-bold text-text-main">도입 수량 (동)</label>
+                        <input type="number" id="calc-qty" class="calc-input w-24 text-center" value="2" min="1">
+                    </div>
+                    <div class="mb-8 flex justify-between items-center">
+                        <label class="text-[18px] md:text-[20px] font-bold text-text-main">사이트 1박 요금 설정 (원)</label>
+                        <input type="number" id="calc-site-fee" class="calc-input w-36" value="50000" min="0" step="1000">
+                    </div>
+                    <div class="mb-8 flex justify-between items-center bg-orange-soft p-4 rounded-xl border border-orange/20">
+                        <label class="text-[18px] md:text-[20px] font-bold text-text-main">텐트 대여료 고정 부과 (원)</label>
+                        <span class="text-[22px] font-extrabold text-orange text-right">+ 20,000원</span>
+                    </div>
+                    <div class="mb-10 flex justify-between items-center">
+                        <label class="text-[18px] md:text-[20px] font-bold text-text-main">월 예상 예약 (회/1동)</label>
+                        <input type="number" id="calc-uses" class="calc-input w-24 text-center" value="5" min="1">
+                    </div>
+                    
+                    <div class="divider w-full my-8 bg-gray-200 h-[2px]"></div>
+                    
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-[18px] md:text-[20px] font-bold text-text-main">총 도입 비용</span>
+                        <span class="text-[24px] md:text-[28px] font-extrabold text-text-dark" id="result-cost">690,000원</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-[18px] md:text-[20px] font-bold text-text-main">월 예상 <span class="text-orange">총매출</span></span>
+                        <span class="text-[24px] md:text-[28px] font-extrabold text-orange" id="result-monthly">700,000원</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-100 p-6 rounded-2xl border border-gray-200 mt-8">
+                        <span class="text-[20px] md:text-[22px] text-text-dark font-extrabold">도입비용 매출액 달성</span>
+                        <span class="text-[28px] md:text-[34px] font-extrabold text-text-dark" id="result-months">약 1.0개월</span>
+                    </div>
+                </div>
+                <p class="text-[15px] text-text-sub mt-6 text-center leading-relaxed font-medium">
+                    총매출을 기준으로 도입비용 100%에 도달하는 예상 기간입니다.<br>
+                    단순 예상치이며 실제 예약률, 운영비 등을 반영하지 않았습니다. 수익을 보장하지 않습니다.
+                </p>
+            </div>
+        </section>
+
+        <!-- 12. 플랫폼 지원 및 Q&A -->
+        <section class="section-box bg-orange-soft">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <h2 class="title-main text-[36px] md:text-[48px]">
+                    상품을 만드는 것부터<br>
+                    고객에게 알리는 것까지<br>
+                    <span class="highlight font-extrabold">함께합니다.</span>
+                </h2>
+                <div class="divider"></div>
+                <p class="title-sub font-bold text-text-dark text-[22px]">
+                    텐트만 공급하고 끝나는 제안이 아닙니다.
+                </p>
+            </div>
+            
+            <div class="w-full max-w-[640px] flex flex-col gap-5 mt-16 fade-up delay-100">
+                <div class="bg-white px-8 py-6 rounded-2xl border border-orange/20 text-[20px] font-extrabold text-text-dark shadow-sm">
+                    1. 캠핑장에 맞는 예약상품 구성 안내
+                </div>
+                <div class="bg-white px-8 py-6 rounded-2xl border border-orange/20 text-[20px] font-extrabold text-text-dark shadow-sm">
+                    2. 땡큐캠핑 플랫폼 내 상품 노출 지원
+                </div>
+                <div class="bg-white px-8 py-6 rounded-2xl border border-orange/20 text-[20px] font-extrabold text-text-dark shadow-sm">
+                    3. 참여 캠핑장 연계 홍보
+                </div>
+            </div>
+
+            <!-- Q&A Box 고정형 -->
+            <div class="qa-box fade-up delay-200 mt-20">
+                <div class="qa-q">
+                    <span class="qa-icon-q">Q.</span>
+                    <span>침구나 취사도구도 모두 준비해야 하나요?</span>
+                </div>
+                <div class="qa-a mb-8">
+                    <span class="qa-icon-a">A.</span>
+                    <span>필수가 아닙니다. 초기에는 텐트만 제공하고, 개인 침구 및 매트는 고객이 지참하도록 안내하는 것을 권장합니다. 관리가 훨씬 수월해집니다.</span>
+                </div>
+                <div class="divider w-full bg-gray-200 my-6 h-[1px]"></div>
+                <div class="qa-q mt-8">
+                    <span class="qa-icon-q">Q.</span>
+                    <span>테이블, 의자는 어떻게 하나요?</span>
+                </div>
+                <div class="qa-a">
+                    <span class="qa-icon-a">A.</span>
+                    <span>대여가 가능하신 캠핑장은 현장에서 추가 대여 수익을 올리실 수 있습니다. 캠페인 홍보 시 일반 고객에게는 "텐트 제공 외 장비 개인지참 (추가 대여 캠핑장 개별 문의)"로 안내될 예정입니다.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 13. 앱 노출 예시 -->
+        <section class="section-box bg-white">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <h2 class="title-main text-[36px] md:text-[48px]">
+                    땡큐캠핑 앱에서<br>
+                    <span class="highlight font-extrabold">이렇게 노출될 예정입니다.</span>
+                </h2>
+                <p class="title-sub mt-4 text-[20px] md:text-[22px]">고객이 더 쉽게 발견하고 예약할 수 있도록 지원합니다.</p>
+                
+                <div class="w-full max-w-[800px] grid grid-cols-1 md:grid-cols-2 gap-6 mt-16 fade-up delay-100 mx-auto">
+                    <div class="bg-gray-50 border border-gray-200 rounded-3xl p-6 flex flex-col items-center">
+                        <div class="w-full aspect-[4/3] bg-white rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center mb-4">
+                            <span class="text-gray-400 font-bold text-lg">이미지 공란</span>
+                        </div>
+                        <p class="text-[22px] font-extrabold text-text-dark">1. 땡큐캠핑 메인 아이콘</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-3xl p-6 flex flex-col items-center">
+                        <div class="w-full aspect-[4/3] bg-white rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center mb-4">
+                            <span class="text-gray-400 font-bold text-lg">이미지 공란</span>
+                        </div>
+                        <p class="text-[22px] font-extrabold text-text-dark">2. 땡큐캠핑 메인 배너</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-3xl p-6 flex flex-col items-center">
+                        <div class="w-full aspect-[4/3] bg-white rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center mb-4">
+                            <span class="text-gray-400 font-bold text-lg">이미지 공란</span>
+                        </div>
+                        <p class="text-[22px] font-extrabold text-text-dark">3. 땡큐캠핑 기획전</p>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-3xl p-6 flex flex-col items-center">
+                        <div class="w-full aspect-[4/3] bg-white rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center mb-4">
+                            <span class="text-gray-400 font-bold text-lg">이미지 공란</span>
+                        </div>
+                        <p class="text-[22px] font-extrabold text-text-dark">4. 땡큐캠핑 Q가이드</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 14. 클로징 & 신청 폼 -->
+        <section class="section-box bg-gray-50 pb-36" id="apply">
+            <div class="fade-up w-full text-center flex flex-col items-center">
+                <img src="https://www.genspark.ai/api/files/s/8tRzfuV1" alt="땡큐캠핑 로고" class="h-10 mb-12 object-contain" onerror="this.outerHTML='<span class=\'font-extrabold text-[32px] text-orange mb-12 inline-block\'>땡큐캠핑</span>'">
+                
+                <h2 class="title-main text-[34px] md:text-[46px]">
+                    캠핑 문화를 따라가는 캠핑장이 아닌,<br>
+                    <span class="highlight font-extrabold">문화를 만드는 캠핑장이 되어 보세요.</span>
+                </h2>
+                <p class="title-sub mt-6 font-bold text-[22px] text-text-dark">
+                    몸만 가는 캠핑의 첫 번째 파트너, 공동구매에 참여하세요.
+                </p>
+            </div>
+
+            <div class="w-full max-w-[540px] mt-20 bg-white p-10 rounded-[32px] shadow-lg border border-gray-200 text-left fade-up delay-100">
+                <h3 class="text-[28px] font-extrabold text-text-dark mb-10 text-center">공동구매 및 캠페인 참여 신청</h3>
+                
+                <form id="apply-form" class="space-y-6">
+                    <div>
+                        <label class="block text-[16px] font-bold text-text-dark mb-2">캠핑장명 *</label>
+                        <input type="text" id="form-camp" class="w-full border border-gray-300 p-4 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:border-orange transition-colors text-[18px]" required>
+                    </div>
+                    <div>
+                        <label class="block text-[16px] font-bold text-text-dark mb-2">담당자명 *</label>
+                        <input type="text" id="form-name" class="w-full border border-gray-300 p-4 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:border-orange transition-colors text-[18px]" required>
+                    </div>
+                    <div>
+                        <label class="block text-[16px] font-bold text-text-dark mb-2">연락처 *</label>
+                        <input type="tel" id="form-phone" placeholder="010-0000-0000" class="w-full border border-gray-300 p-4 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:border-orange transition-colors text-[18px]" required>
+                    </div>
+                    <div>
+                        <label class="block text-[16px] font-bold text-text-dark mb-2">구매 수량 (동) *</label>
+                        <input type="number" id="form-purchase-qty" placeholder="예: 2" min="1" class="w-full border border-gray-300 p-4 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:border-orange transition-colors text-[18px]" required>
+                    </div>
+                    
+                    <div class="pt-6 flex items-start">
+                        <input type="checkbox" id="form-agree" class="mt-1 mr-3 w-5 h-5 accent-[#ED7900]" required>
+                        <label for="form-agree" class="text-[15px] font-medium text-text-main leading-relaxed">
+                            개인정보 수집 및 이용에 동의합니다.<br>
+                            <span class="text-[13px] text-text-sub font-normal">(수집항목: 캠핑장명, 이름, 연락처 / 목적: 상담 및 안내 / 보유기간: 상담 종료 시 파기)</span>
+                        </label>
+                    </div>
+
+                    <div class="pt-8">
+                        <button type="submit" class="btn-primary w-full max-w-none rounded-2xl py-5 text-[22px]">공동구매 및 캠페인 참여하기</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="mobile-cta">
+        <div class="flex flex-col">
+            <span class="text-[13px] font-bold text-text-sub">캠지기 전용 특별가</span>
+            <span class="text-[22px] font-extrabold text-orange leading-none mt-1">345,000<span class="text-[15px] font-bold text-text-dark ml-1">원</span></span>
+        </div>
+        <a href="#apply" class="bg-[#ED7900] text-white font-extrabold px-6 py-3.5 rounded-xl text-[16px]">공동구매 참여하기</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            /* 1. 스크롤 등장 애니메이션 */
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-up').forEach(el => {
+                observer.observe(el);
+            });
+
+            /* 2. 수익 계산기 (사이트 비용 + 고정 대여료 총매출 방식) */
+            const calcQty = document.getElementById('calc-qty');
+            const calcSiteFee = document.getElementById('calc-site-fee');
+            const calcUses = document.getElementById('calc-uses');
+            
+            const resCost = document.getElementById('result-cost');
+            const resMonthly = document.getElementById('result-monthly');
+            const resMonths = document.getElementById('result-months');
+
+            const tentPrice = 345000;
+            const fixedTentFee = 20000; // 고정 대여료
+
+            function updateCalculator() {
+                const qty = parseInt(calcQty.value) || 0;
+                const siteFee = parseInt(calcSiteFee.value) || 0; 
+                const uses = parseInt(calcUses.value) || 0;
+
+                const totalCost = qty * tentPrice; // 총 도입 비용
+                const revenuePerUse = siteFee + fixedTentFee; // 1회 대여 시 총 매출 (사이트+텐트)
+                const monthlyRev = qty * revenuePerUse * uses; // 월 예상 총 매출
+                
+                resCost.textContent = totalCost.toLocaleString('ko-KR') + '원';
+                resMonthly.textContent = monthlyRev.toLocaleString('ko-KR') + '원';
+
+                if (monthlyRev > 0) {
+                    const months = totalCost / monthlyRev; // 총비용을 월 매출액으로 도달하는 기간
+                    resMonths.textContent = `약 ${months.toFixed(1)}개월`;
+                } else {
+                    resMonths.textContent = '계산 불가';
+                }
+            }
+
+            [calcQty, calcSiteFee, calcUses].forEach(input => {
+                input.addEventListener('input', updateCalculator);
+            });
+            updateCalculator(); // 초기 계산 실행
+
+            /* 3. 신청 폼 제출 처리 */
+            const form = document.getElementById('apply-form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const camp = document.getElementById('form-camp').value.trim();
+                const name = document.getElementById('form-name').value.trim();
+                const phone = document.getElementById('form-phone').value.trim();
+                const purchaseQty = document.getElementById('form-purchase-qty').value.trim();
+                const agree = document.getElementById('form-agree').checked;
+
+                if (!camp || !name || !phone || !purchaseQty || !agree) {
+                    alert('모든 필수 항목을 입력하고 동의해주세요.');
+                    return;
+                }
+
+                alert('신청 정보가 확인되었습니다.\n빠른 시일 내에 기재해주신 연락처로 안내를 드리겠습니다.');
+                form.reset();
+            });
+
+            /* 4. 부드러운 스크롤 이동 */
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if(target){
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
