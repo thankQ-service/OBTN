@@ -1078,7 +1078,82 @@
         </div>
     </div>
 
-    <script>
+    <!-- Custom Duplicate Modal (중복 신청 알림 모달) -->
+    <div id="duplicate-modal" class="hidden fixed inset-0 z-[99999] bg-black/70 flex justify-center items-center p-4 font-sans text-gray-800 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-[32px] p-8 w-full max-w-[400px] shadow-2xl text-center transform scale-100">
+            <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-extrabold mb-2 text-gray-900">이미 접수된 번호입니다!</h3>
+            <p class="text-gray-500 mb-6 font-medium leading-relaxed">입력하신 연락처로 이미 신청 내역이 존재합니다.<br>아래 기존 신청 정보를 확인해주세요.</p>
+            
+            <div class="bg-gray-50 rounded-2xl p-5 mb-8 text-left border border-gray-200 shadow-inner">
+                <div class="flex justify-between mb-3 items-center">
+                    <span class="text-gray-500 font-bold text-[15px]">캠핑장명</span>
+                    <span id="dup-modal-camp-name" class="font-extrabold text-gray-900 text-[18px]"></span>
+                </div>
+                <div class="flex justify-between mb-3 items-center">
+                    <span class="text-gray-500 font-bold text-[15px]">신청수량</span>
+                    <span id="dup-modal-qty" class="font-extrabold text-[#ED7900] text-[18px] text-right"></span>
+                </div>
+                <div class="flex justify-between pt-3 border-t border-gray-200 items-center">
+                    <span class="text-gray-500 font-bold text-[15px]">결제예정금액</span>
+                    <span id="dup-modal-amount" class="font-extrabold text-gray-900 text-[18px]"></span>
+                </div>
+            </div>
+            
+            <button onclick="closeDuplicateModal()" class="w-full bg-gray-800 text-white font-extrabold py-4 rounded-xl text-xl hover:bg-gray-900 transition-colors shadow-lg">확인</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // 환경 변수 셋업 (아래 부분을 사장님의 Firebase 설정으로 직접 교체하세요)
+        const appId = 'obtn-campaign-1'; // 구분을 위한 임의의 영문/숫자 아이디 입력
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAr4TNhh4EvUnO8VuvjJRib2sP0tnpMLM",
+            authDomain: "obtn-378ec.firebaseapp.com",
+            projectId: "obtn-378ec",
+            storageBucket: "obtn-378ec.firebasestorage.app",
+            messagingSenderId: "737786769102",
+            appId: "1:737786769102:web:2de93547edda9079322a9f",
+            measurementId: "G-NR36M5RSN0"
+        };
+        
+        // Firebase 초기화
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // 상태 관리
+        let applicantsData = [];
+        let adminUnsubscribe = null;
+        let isFirebaseReady = false; // 파이어베이스 준비 상태 플래그
+
+        // DB 접근 전 인증 필수 처리
+        async function initFirebase() {
+            // API 키가 임시 값(xxxx)일 경우 에러 방지 (프리뷰 테스트용)
+            if (firebaseConfig.apiKey.includes("xxxx")) {
+                console.warn("⚠️ Firebase 설정이 임시 값(xxxx)입니다. 실제 API Key를 입력해야 데이터베이스가 작동합니다.");
+                return;
+            }
+            try {
+                // 사장님 개인 파이어베이스 프로젝트이므로 무조건 익명 로그인을 사용합니다.
+                await signInAnonymously(auth);
+                isFirebaseReady = true;
+            } catch (error) {
+                console.error("Firebase Auth Error:", error);
+            }
+        }
+        initFirebase();
+
         document.addEventListener("DOMContentLoaded", function() {
             /* 1. 스크롤 등장 애니메이션 */
             const observerOptions = {
@@ -1232,10 +1307,10 @@
                 });
             }
 
-            /* 4. 신청 폼 제출 처리 */
+            /* 4. 신청 폼 제출 처리 (Firebase 연동) */
             const form = document.getElementById('apply-form');
             if(form) {
-                form.addEventListener('submit', function(e) {
+                form.addEventListener('submit', async function(e) {
                     e.preventDefault();
 
                     const camp = document.getElementById('form-camp').value.trim();
@@ -1282,9 +1357,24 @@
                         green: parseInt(document.getElementById('qty-black4').value) || 0
                     };
 
-                    // 관리자 페이지용 데이터 저장 (localStorage)
+                    // 모달에 입력받은 데이터 세팅 (실제 저장 전 UI 세팅)
+                    document.getElementById('modal-camp-name').textContent = camp;
+                    document.getElementById('modal-qty').innerHTML = totalQty + '동<br><span class="text-[13px] text-gray-500 font-medium leading-tight block mt-1">' + colorDetailsStr + '</span>';
+                    document.getElementById('modal-amount').textContent = (totalQty * tentPrice).toLocaleString('ko-KR') + '원';
+
+                    // 파이어베이스가 연결되지 않은 프리뷰 상태일 때의 예외 처리
+                    if (!isFirebaseReady) {
+                        alert("현재 미리보기(테스트) 상태입니다.\n(Firebase 실제 키가 입력되지 않아 클라우드에 저장되지는 않습니다.)");
+                        document.getElementById('success-modal').classList.remove('hidden');
+                        document.body.style.overflow = 'hidden';
+                        form.reset();
+                        document.querySelectorAll('.color-qty-input').forEach(input => input.value = 0);
+                        updateTotalAmount();
+                        return;
+                    }
+
+                    // Firebase에 전송할 데이터
                     const newEntry = {
-                        id: Date.now(),
                         date: new Date().toISOString(),
                         camp: camp,
                         name: name,
@@ -1297,22 +1387,51 @@
                         linkSent: false,
                         taxIssued: false
                     };
-                    let applicants = JSON.parse(localStorage.getItem('obtn_applicants') || '[]');
-                    applicants.push(newEntry);
-                    localStorage.setItem('obtn_applicants', JSON.stringify(applicants));
-
-                    // 모달에 입력받은 데이터 세팅
-                    document.getElementById('modal-camp-name').textContent = camp;
-                    document.getElementById('modal-qty').innerHTML = totalQty + '동<br><span class="text-[13px] text-gray-500 font-medium leading-tight block mt-1">' + colorDetailsStr + '</span>';
-                    document.getElementById('modal-amount').textContent = (totalQty * tentPrice).toLocaleString('ko-KR') + '원';
                     
-                    // 모달 표시
-                    document.getElementById('success-modal').classList.remove('hidden');
-                    document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+                    try {
+                        const collRef = collection(db, 'artifacts', appId, 'public', 'data', 'applicants');
+                        
+                        // --- 휴대폰 번호 중복 체크 로직 시작 ---
+                        const q = query(collRef, where("phone", "==", phone));
+                        const querySnapshot = await getDocs(q);
+                        
+                        if (!querySnapshot.empty) {
+                            // 중복 데이터 발견 시 기존 데이터 추출
+                            const existingData = querySnapshot.docs[0].data();
+                            
+                            // 중복 알림 모달에 데이터 세팅
+                            document.getElementById('dup-modal-camp-name').textContent = existingData.camp;
+                            document.getElementById('dup-modal-qty').innerHTML = existingData.qty + '동<br><span class="text-[13px] text-gray-500 font-medium leading-tight block mt-1">' + (existingData.colorDetails || '') + '</span>';
+                            document.getElementById('dup-modal-amount').textContent = (Number(existingData.amount) || 0).toLocaleString('ko-KR') + '원';
+                            
+                            // 중복 알림 모달 표시
+                            document.getElementById('duplicate-modal').classList.remove('hidden');
+                            document.body.style.overflow = 'hidden';
+                            
+                            return; // 더 이상 진행하지 않고 함수 종료 (DB 중복 저장 방지)
+                        }
+                        // --- 휴대폰 번호 중복 체크 로직 끝 ---
 
-                    form.reset();
-                    document.querySelectorAll('.color-qty-input').forEach(input => input.value = 0);
-                    updateTotalAmount(); // 초기화 후 결제금액 0원으로 복구
+                        // DB에 저장 (public/data/applicants)
+                        await addDoc(collRef, newEntry);
+                        
+                        // 모달 표시
+                        document.getElementById('success-modal').classList.remove('hidden');
+                        document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+
+                        form.reset();
+                        document.querySelectorAll('.color-qty-input').forEach(input => input.value = 0);
+                        updateTotalAmount(); // 초기화 후 결제금액 0원으로 복구
+                    } catch (error) {
+                        let errorMsg = error.message;
+                        if (errorMsg.includes("Missing or insufficient permissions")) {
+                            errorMsg = "데이터베이스 접근 권한이 없습니다. Firebase 콘솔에서 Firestore '보안 규칙(Rules)'을 테스트 모드(허용)로 변경해주세요.";
+                        } else if (window.location.protocol === 'file:') {
+                            errorMsg = "컴퓨터 폴더에서 직접 열어(file://) 실행 중입니다. Firebase는 웹(http://) 환경에서 정상 작동하므로 깃허브 링크로 접속해서 테스트해주세요.";
+                        }
+                        alert("신청 중 오류가 발생했습니다.\n\n[오류 원인 안내]\n" + errorMsg + "\n\n(상세오류코드: " + error.message + ")");
+                        console.error(error);
+                    }
                 });
             }
 
@@ -1335,7 +1454,24 @@
                 if (pw === 'Net0521') {
                     document.getElementById('admin-panel').classList.remove('hidden');
                     document.body.style.overflow = 'hidden'; // 뒤쪽 배경 스크롤 방지
-                    renderAdmin();
+                    
+                    // 파이어베이스 미연결 시 (프리뷰 환경용)
+                    if (!isFirebaseReady) {
+                        alert("현재 미리보기(테스트) 상태입니다.\n실제 파이어베이스 설정값이 없어 임시 빈 화면이 표시됩니다.");
+                        applicantsData = [];
+                        renderAdmin();
+                        return;
+                    }
+
+                    // Firebase 실시간 데이터 구독
+                    const collRef = collection(db, 'artifacts', appId, 'public', 'data', 'applicants');
+                    adminUnsubscribe = onSnapshot(collRef, (snapshot) => {
+                        applicantsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        renderAdmin();
+                    }, (error) => {
+                        console.error("Firestore onSnapshot Error:", error);
+                    });
+
                 } else if (pw !== null) {
                     alert('비밀번호가 일치하지 않습니다.');
                 }
@@ -1344,6 +1480,11 @@
             window.closeAdmin = function() {
                 document.getElementById('admin-panel').classList.add('hidden');
                 document.body.style.overflow = '';
+                // 구독 해제
+                if (adminUnsubscribe) {
+                    adminUnsubscribe();
+                    adminUnsubscribe = null;
+                }
             };
 
             window.sortAdmin = function(type) {
@@ -1352,7 +1493,7 @@
             };
 
             window.renderAdmin = function() {
-                let applicants = JSON.parse(localStorage.getItem('obtn_applicants') || '[]');
+                let applicants = [...applicantsData];
                 
                 // 검색 기능 추가
                 const searchTerm = (document.getElementById('admin-search')?.value || '').toLowerCase().trim();
@@ -1434,31 +1575,30 @@
                             <span class="px-3 py-1 rounded-full text-[13px] font-bold ${item.paymentMethod === '카드결제' ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-700'}">${item.paymentMethod}</span>
                         </td>
                         <td class="p-4 text-center">
-                            <input type="checkbox" class="w-5 h-5 accent-[#ED7900] cursor-pointer" ${item.linkSent ? 'checked' : ''} onchange="toggleCheck(${item.id}, 'linkSent', this.checked)">
+                            <input type="checkbox" class="w-5 h-5 accent-[#ED7900] cursor-pointer" ${item.linkSent ? 'checked' : ''} onchange="toggleCheck('${item.id}', 'linkSent', this.checked)">
                         </td>
                         <td class="p-4 text-center">
-                            <input type="checkbox" class="w-5 h-5 accent-[#ED7900] cursor-pointer" ${item.taxIssued ? 'checked' : ''} onchange="toggleCheck(${item.id}, 'taxIssued', this.checked)">
+                            <input type="checkbox" class="w-5 h-5 accent-[#ED7900] cursor-pointer" ${item.taxIssued ? 'checked' : ''} onchange="toggleCheck('${item.id}', 'taxIssued', this.checked)">
                         </td>
                         <td class="p-4 text-center">
-                            <button onclick="openAdminEdit(${item.id})" class="bg-gray-100 border border-gray-300 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-gray-200 transition-colors shadow-sm">수정</button>
+                            <button onclick="openAdminEdit('${item.id}')" class="bg-gray-100 border border-gray-300 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-gray-200 transition-colors shadow-sm">수정</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
             };
 
-            window.toggleCheck = function(id, field, value) {
-                let applicants = JSON.parse(localStorage.getItem('obtn_applicants') || '[]');
-                const idx = applicants.findIndex(app => app.id === id);
-                if (idx !== -1) {
-                    applicants[idx][field] = value;
-                    localStorage.setItem('obtn_applicants', JSON.stringify(applicants));
+            window.toggleCheck = async function(id, field, value) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'applicants', id);
+                    await updateDoc(docRef, { [field]: value });
+                } catch (error) {
+                    console.error("데이터 업데이트 실패:", error);
                 }
             };
 
             window.openAdminEdit = function(id) {
-                let applicants = JSON.parse(localStorage.getItem('obtn_applicants') || '[]');
-                const item = applicants.find(app => app.id === id);
+                const item = applicantsData.find(app => app.id === id);
                 if (item) {
                     document.getElementById('edit-id').value = item.id;
                     document.getElementById('edit-camp').value = item.camp;
@@ -1500,48 +1640,54 @@
                 document.getElementById('admin-edit-modal').classList.add('hidden');
             };
 
-            window.saveAdminEdit = function() {
-                const id = parseInt(document.getElementById('edit-id').value);
-                let applicants = JSON.parse(localStorage.getItem('obtn_applicants') || '[]');
-                const idx = applicants.findIndex(app => app.id === id);
-                if (idx !== -1) {
-                    applicants[idx].camp = document.getElementById('edit-camp').value;
-                    applicants[idx].name = document.getElementById('edit-name').value;
-                    applicants[idx].phone = document.getElementById('edit-phone').value;
-                    
-                    const black = parseInt(document.getElementById('edit-color-black').value) || 0;
-                    const blue = parseInt(document.getElementById('edit-color-blue').value) || 0;
-                    const marstan = parseInt(document.getElementById('edit-color-marstan').value) || 0;
-                    const green = parseInt(document.getElementById('edit-color-green').value) || 0;
-                    
-                    applicants[idx].colors = { black, blue, marstan, green };
-                    
-                    let colorDetailsArr = [];
-                    if(black > 0) colorDetailsArr.push('스페이스 블랙 ' + black + '동');
-                    if(blue > 0) colorDetailsArr.push('제니스 블루 ' + blue + '동');
-                    if(marstan > 0) colorDetailsArr.push('마르스탄 ' + marstan + '동');
-                    if(green > 0) colorDetailsArr.push('우라누스 그린 ' + green + '동');
-                    
-                    applicants[idx].colorDetails = colorDetailsArr.join(', ');
-                    
-                    applicants[idx].qty = parseInt(document.getElementById('edit-qty').value) || 0;
-                    applicants[idx].amount = parseInt(document.getElementById('edit-amount').value) || 0;
-                    applicants[idx].paymentMethod = document.getElementById('edit-payment').value;
-                    
-                    localStorage.setItem('obtn_applicants', JSON.stringify(applicants));
+            window.saveAdminEdit = async function() {
+                const id = document.getElementById('edit-id').value;
+                
+                const camp = document.getElementById('edit-camp').value;
+                const name = document.getElementById('edit-name').value;
+                const phone = document.getElementById('edit-phone').value;
+                
+                const black = parseInt(document.getElementById('edit-color-black').value) || 0;
+                const blue = parseInt(document.getElementById('edit-color-blue').value) || 0;
+                const marstan = parseInt(document.getElementById('edit-color-marstan').value) || 0;
+                const green = parseInt(document.getElementById('edit-color-green').value) || 0;
+                
+                const colors = { black, blue, marstan, green };
+                
+                let colorDetailsArr = [];
+                if(black > 0) colorDetailsArr.push('스페이스 블랙 ' + black + '동');
+                if(blue > 0) colorDetailsArr.push('제니스 블루 ' + blue + '동');
+                if(marstan > 0) colorDetailsArr.push('마르스탄 ' + marstan + '동');
+                if(green > 0) colorDetailsArr.push('우라누스 그린 ' + green + '동');
+                
+                const colorDetails = colorDetailsArr.join(', ');
+                const qty = parseInt(document.getElementById('edit-qty').value) || 0;
+                const amount = parseInt(document.getElementById('edit-amount').value) || 0;
+                const paymentMethod = document.getElementById('edit-payment').value;
+                
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'applicants', id);
+                    await updateDoc(docRef, {
+                        camp, name, phone, colors, colorDetails, qty, amount, paymentMethod
+                    });
                     closeAdminEdit();
-                    renderAdmin();
+                } catch (error) {
+                    console.error("수정 실패:", error);
+                    alert("수정 내용 저장 중 오류가 발생했습니다.");
                 }
             };
 
-            window.deleteAdminItem = function() {
+            window.deleteAdminItem = async function() {
                 if(confirm('이 신청 내역을 정말 삭제하시겠습니까?')) {
-                    const id = parseInt(document.getElementById('edit-id').value);
-                    let applicants = JSON.parse(localStorage.getItem('obtn_applicants') || '[]');
-                    applicants = applicants.filter(app => app.id !== id);
-                    localStorage.setItem('obtn_applicants', JSON.stringify(applicants));
-                    closeAdminEdit();
-                    renderAdmin();
+                    const id = document.getElementById('edit-id').value;
+                    try {
+                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'applicants', id);
+                        await deleteDoc(docRef);
+                        closeAdminEdit();
+                    } catch (error) {
+                        console.error("삭제 실패:", error);
+                        alert("삭제 중 오류가 발생했습니다.");
+                    }
                 }
             };
 
@@ -1550,8 +1696,13 @@
                 document.body.style.overflow = ''; // 배경 스크롤 방지 해제
             };
 
+            window.closeDuplicateModal = function() {
+                document.getElementById('duplicate-modal').classList.add('hidden');
+                document.body.style.overflow = ''; // 배경 스크롤 방지 해제
+            };
+
             window.exportExcel = function() {
-                let applicants = JSON.parse(localStorage.getItem('obtn_applicants') || '[]');
+                let applicants = [...applicantsData];
                 if (applicants.length === 0) {
                     alert('출력할 데이터가 없습니다.');
                     return;
